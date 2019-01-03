@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Beers Show</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="loader.js"></script>
+</head>
+
+<body>
+
+    <h1>Beer site</h1>
+    <button onclick="sortByName()">Sort A-Z</button>
+    <button onclick="sortByAlcohol()">Sort Alcohol</button>
+
+    Filter:
+    <input type="checkbox" class="reverse" value="false" onchange="filterData()">reverse
+    <input type="range" min="5" max="15" value="5" step="0.1" onchange="filterData(this.value)">
+    <span id="textInput">5</span>%
+
+    <ul id="container">
+    </ul>
+
+    <script>
+        function sort(getSortElement) {
+            let list = document.getElementById("container");
+            let switching = true;
+
+            while (switching) {
+
+                switching = false;
+                let elements = list.getElementsByTagName("li");
+                let shouldSwitch = false;
+                let i;
+
+                for (i = 0; i < (elements.length - 1); i++) {
+
+                    if (getSortElement(elements[i]) > getSortElement(elements[i + 1])) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+
+                if (shouldSwitch) {
+                    elements[i].parentNode.insertBefore(elements[i + 1], elements[i]);
+                    switching = true;
+                }
+            }
+        }
+
+        function sortByName() {
+            sort(elem => elem.querySelector('.name').innerHTML.toLowerCase());
+        }
+
+        function sortByAlcohol() {
+            sort(elem => parseFloat(elem.querySelector('.alcohol').getAttribute('data')));
+        }
+
+        function filterData(val) {
+            let alcoholValue;
+
+            if (val) {
+                document.getElementById('textInput').innerHTML = val;
+                alcoholValue = parseFloat(val);
+            } else {
+                alcoholValue = document.getElementById('textInput').innerHTML;
+            }
+
+            let list = document.getElementById("container");
+            let reverse = document.querySelector('.reverse').checked;
+
+            let elements = list.getElementsByTagName("li");
+            for (let i = 0; i < elements.length; i++) {
+                let alcohol = parseFloat(elements[i].querySelector('.alcohol').getAttribute('data'));
+
+                if ((alcohol > alcoholValue) ^ reverse) {
+                    elements[i].style.display = "block";
+                } else {
+                    elements[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
